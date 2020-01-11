@@ -1,0 +1,246 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php $this->load->view("partial/header"); ?>
+<script src="<?php echo base_url() ?>assets/js/invoice.js"></script>
+
+<script>
+function showCustomer(str) {
+  var xhttp;
+  var url="http://www.localhost/eobi/amountinword.php?q=";
+  
+  if (str == "") {
+    document.getElementById("txtHint").innerHTML = "error";
+
+    return;
+  }
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("txtHint").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", url+str, true);
+  xhttp.send();
+}
+</script>
+
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+
+
+<section class="content-header">
+    <?php if (isset($error_message)) { ?>
+        <div class="alert alert-danger alert-dismissable">
+            <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
+            <?php echo $error_message; ?>
+        </div>
+    <?php } ?>
+    <h1><a href="<?php echo base_url().""; ?>" title="Go Back"><span style="color:#000;" class="fa fa-arrow-left "></span></a> Bank Payment Vouchers</h1>
+</section>
+
+
+
+
+<!-- <form method="post">
+    <table border="1" align="center">
+        <tr>
+        <td>Enter Your Numbers</td>
+        <Td><input type="text" name="num" value="<?php if(isset($num)){echo $num;}?>"/></Td>
+        </tr>
+        <tr>
+        <td colspan="2" align="center">
+        <input type="submit" value="Conver Number to Words" name="convert"/>
+        </td>
+        </tr>
+    </table>
+</form> -->
+
+<form style="form-inline" id="supplierbill" method="post" action="<?= base_url() ?>bank_vouchers/add_sales">
+    <!--  FLAME's 🔥 Code  -->
+    <div class="box box-default">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="text" name="date" id="date" class="form-control datepicker" >
+                    </div>
+                    <div class="form-group">
+                        <label for="received_from">Paid To</label>
+                        <input type="text" name="received_from" id="received_from" class="form-control" placeholder="Paid To" >
+
+                        <!-- <select name="received_from" id="received_from" class="form-control select2">
+                            <option value="">Select Account</option>
+                            <?php foreach($account as $v): ?>
+                                <option value="<?= $v->account_id ?>"><?= $v->account_title ?></option>
+                            <?php endforeach; ?>
+                        </select> -->
+                    </div>
+                    <div class="form-group">
+                        <label for="rs">Rs</label>
+                        <input type="number" name="rs" id="rs" class="form-control" placeholder="Rs." >
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="sent_to">On Account Of</label>
+                        <input type="text" name="sent_to" id="received_frosent_tom" class="form-control" placeholder="Account of" >
+                        <!-- <select name="sent_to" id="sent_to" class="form-control select2">
+                            <option value="">Select Account</option>
+                            <?php foreach($account as $v): ?>
+                                <option value="<?= $v->account_id ?>"><?= $v->account_title ?></option>
+                            <?php endforeach; ?>
+                        </select> -->
+                    </div>
+                    <div class="form-group">
+                        <label for="by_cheque_num">By Cheque Number</label>
+                        <input type="text" name="by_cheque_num" id="by_cheque_num" class="form-control" placeholder="By Cheque Number" >
+                    </div>
+                    <div class="form-group">
+                        <label for="amount_in_word">Amount In Word</label>
+                        <input type="text" name="amount_in_word" id="amount_in_word" class="form-control" placeholder="Amount In Word" >
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="bpv_num">BPV #</label>
+                        <input type="text" name="bpv_num" id="bpv_num" class="form-control" placeholder="BPV #" >
+                    </div>
+                    <div class="form-group">
+                        <label for="bpv_date">BPV Date</label>
+                        <input type="text" name="bpv_date" id="bpv_date" class="form-control datepicker" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-default">
+        <div class="box-body">
+            <div class="table-responsive">
+                <table class="table w-100">
+                    <thead>
+                    <tr>
+                        <th>Account Code Number</th>
+                        <th>Name</th>
+                        <th>Narration</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody id="addItemsDiv" >
+                    <tr id="item_1" >
+                        <td>
+                         <select name="details[account_code_num][]" id="account_code_num1" class="form-control select2">
+                            <option value="">Select Account Code Number</option>
+                            <?php foreach($account as $v): ?>
+                                <option value="<?= $v->char_id ?>"><?= $v->char_main ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                            <!-- <input type="text" name="details[account_code_num][]" id="account_code_num1"
+                                   class="form-control" placeholder="Account Code Number"> -->
+                        </td>
+                        <td>
+                            <input type="text" name="details[name][]" id="name1" class="form-control" placeholder="Name">
+                        </td>
+                        <td>
+                            <input type="text" name="details[narration][]" id="narration1" class="form-control" placeholder="Narration">
+                        </td>
+                        <td>
+                            <input type="number" name="details[debit][]" id="debit1" class="form-control" placeholder="Debit">
+                        </td>
+                        <td>
+                            <input type="number" name="details[credit][]" id="credit1" class="form-control" placeholder="Credit">
+                        </td>
+                        <td>
+                            <a href="javascript:void(0)" onclick="removeItem(1)" ><i class="fa fa-close"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" onclick="addMoreItem()" >Add Row</button>
+                </div>
+            </div>
+        </div>
+</div>
+    <div class="box box-default">
+        <div class="box-header">
+            <h3 class="box-title">Checked in Audit Department</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="audit_department_verified_amount">Audit Department Verified Payment Amount</label>
+                        <input type="number" name="audit_department_verified_amount" id="audit_department_verified_amount" class="form-control" placeholder="Rs" >
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="amountinword">Amount in word</label>
+                        <input type="text" name="amountinword" id="amountinword" class="form-control" placeholder="Amount In Word" >
+                    </div>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+    </div>
+    <!--  FlAME's 🔥 Code End  -->
+    <div class="row">
+        <div class="col-md-1">
+            <input type="submit" name="submit" value="Add Sale" class="btn btn-success">
+        </div>
+        &nbsp;
+        <div class="col-md-1">
+            <input type="submit" name="submit" value="Add & Print" class="btn btn-primary">
+        </div>
+    </div>
+    <br>
+</form>
+<script>
+    sevIndex = <?= (--$count !== null) ? --$count : 'null' ?>;
+    invIndex = 0;
+
+
+    let itemCounter = 1;
+    addMoreItem = () => {
+        itemCounter++;
+        let html = `<tr id="item_${itemCounter}" >` +
+            '<td>' +
+            '<select name="details[account_code_num][]" id="account_code_num1" class="form-control select2"><option value="">Select Account Code Number</option><?php foreach($account as $v): ?><option value="<?= $v->char_id ?>"><?= $v->char_main ?></option><?php endforeach; ?></select>' +
+            '</td>' +
+            '<td>' +
+            '<input type="text" name="details[name][]" id="name1" class="form-control" placeholder="Name">' +
+            '</td>' +
+            '<td>' +
+            '<input type="text" name="details[narration][]" id="narration1" class="form-control" placeholder="Narration">' +
+            '</td>' +
+            '<td>' +
+            '<input type="number" name="details[debit][]" id="debit1" class="form-control" placeholder="Debit">' +
+            '</td>' +
+            '<td>' +
+            '<input type="number" name="details[credit][]" id="credit1" class="form-control" placeholder="Credit">' +
+            '</td>' +
+            '<td>' +
+            `<a href="javascript:void(0)" onclick="removeItem(${itemCounter})" ><i class="fa fa-close"></i></a>` +
+            '</td>' +
+            '</tr>';
+        $("#addItemsDiv").append(html);
+    };
+
+    removeItem = (id) => {
+        document.getElementById('item_' + id).remove();
+    };
+
+    $(document).ready(function(){
+        $(".select2").select2();
+        $(".datepicker").datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        })
+    });
+
+</script>
+
+
+<?php $this->load->view("partial/footer"); ?>
